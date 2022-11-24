@@ -6,6 +6,15 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
+
+struct Carro {
+  char marca[30];
+  char modelo[30];
+  int ano;
+  int portas;
+  char placa[10];
+};
 
 void flush_in() {
   int ch;
@@ -75,7 +84,7 @@ char exibirMenuRelatorios() {
   return op2;
 }
 
-void calibrar(){
+void calibrar() {
   int pressao;
 
   printf("Digite o valor da pressao desejada no pneu:");
@@ -84,14 +93,78 @@ void calibrar(){
   printf("%sTodos os pneus foram calibrados!%s\n", C_GREEN, NONE);
 }
 
+void impFila(struct Carro carrosFila[]) {
+  for (int i = 0; i <= sizeof(carrosFila) / sizeof(int); i++) {
+    if (strcmp(carrosFila[i].marca, "") != 0) {
+      printf("Carro %i\n", i + 1);
+      printf("Marca: %s\n", carrosFila[i].marca);
+      printf("Modelo: %s\n", carrosFila[i].modelo);
+      printf("Ano: %i\n", carrosFila[i].ano);
+      printf("Portas: %i\n", carrosFila[i].portas);
+      printf("Placa: %s\n\n", carrosFila[i].placa);
+    }
+  }
+}
+
+void impAtend(struct Carro atendidos[]){
+  for (int i = 0; i <= sizeof(atendidos) / sizeof(int); i++) {
+    if (strcmp(atendidos[i].marca, "") != 0) {
+      printf("Carro %i\n", i + 1);
+      printf("Marca: %s\n", atendidos[i].marca);
+      printf("Modelo: %s\n", atendidos[i].modelo);
+      printf("Ano: %i\n", atendidos[i].ano);
+      printf("Portas: %i\n", atendidos[i].portas);
+      printf("Placa: %s\n\n", atendidos[i].placa);
+    }
+  }
+}
+
+void limparFila(struct Carro c[], struct Carro none) {
+  for (int i = 0; i <= sizeof(c) / sizeof(int); i++) {
+    c[i] = none;
+  }
+}
+
+void informarCarro(struct Carro carrosFila[], int fila) {
+  struct Carro c;
+
+  printf("Informe os dados do seu carro\nMarca: ");
+  scanf("%s", &c.marca);
+  printf("Modelo: ");
+  scanf("%s", &c.modelo);
+  printf("Ano: ");
+  scanf("%i", &c.ano);
+  printf("Portas: ");
+  scanf("%i", &c.portas);
+  printf("Placa: ");
+  scanf("%s", &c.placa);
+  printf("\n");
+
+  carrosFila[fila] = c;
+}
+
+void atenderCarro(struct Carro carrosFila[], struct Carro atendidos[], int fila,
+                  int atend) {
+  struct Carro n = {"", "", 0, 0, ""}; 
+  atendidos[atend] = carrosFila[0];
+
+  for (int i = 0; i <= sizeof(carrosFila) / sizeof(int); i++) {
+    if (i != fila - 1) {
+      carrosFila[i] = carrosFila[i + 1];
+    } else {
+      carrosFila[i] = n;
+    }
+  }
+}
+
 int main(void) {
   float tanq_pad = 200; // Quantidade inicial de gasolina no tanque
   float preco;          // Valor da gasolina
   int tam;              // Tamanho da fila
   float tanque = 200;   // Quantidade de litros
+  int fila = 0;         // Número de carros na fila
   bool rep = true;      // Parametro do  laço de repetição do menu principal
   bool rep2 = true; // Parametro do  laço de repetição do menu relatórios
-  int fila = 0;     // Número de carros na fila
   int atend = 0;    // Número de clientes atendidos
   float abast;      // Variável de leitura do valor a ser abastecido
 
@@ -101,10 +174,19 @@ int main(void) {
 
   tam = lerTamanho(tam);
 
+  struct Carro none = {"", "", 0, 0, ""}; // Carro nulo
+  struct Carro carrosFila[tam];           // Fila de carros
+  struct Carro atendidos[100];             // Registro de carros atendidos
+
+  limparFila(carrosFila, none);
+  limparFila(atendidos, none);
+
   while (rep) {
     switch (exibirMenu()) {
     case 1:
       if (fila < tam) {
+        informarCarro(carrosFila, fila);
+        impFila(carrosFila);
         printf("%sCarro adicionado!%s\n", C_GREEN, NONE);
         fila++;
       } else {
@@ -117,6 +199,7 @@ int main(void) {
         scanf("%f", &abast);
         if (abast <= tanque) {
           tanque -= abast;
+          atenderCarro(carrosFila, atendidos, fila, atend);
           fila--;
           atend++;
           printf("%sCarro abastecido!%s\n", C_GREEN, NONE);
@@ -129,7 +212,7 @@ int main(void) {
       }
       break;
     case 3:
-      printf("%s%i carros exibidos!%s\n", C_GREEN, atend, NONE);
+      impFila(carrosFila);
       break;
     case 4:
       rep2 = true;
@@ -146,8 +229,9 @@ int main(void) {
                  (tanq_pad - tanque) * preco, NONE);
           break;
         case 'c':
-          printf("%sQuantidade de carros atendidos: %i%s\n", C_CYAN, atend,
+          printf("%sQuantidade de carros atendidos: %i%s\n\n", C_CYAN, atend,
                  NONE);
+          impFila(atendidos);
           break;
         case 'd':
           printf("%sQuantidade de combustível restante no tanque: %.2f%s\n",
@@ -166,7 +250,10 @@ int main(void) {
       }
 
       break;
-    case 5: 
+    case 5:
+      atenderCarro(carrosFila, atendidos, fila, atend);
+      fila--;
+      atend++;
       calibrar();
       break;
     case 6:
