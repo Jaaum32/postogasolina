@@ -1,6 +1,7 @@
 #define C_RED "\033[31m"
 #define C_GREEN "\033[32m"
 #define C_YELLOW "\033[33m"
+#define C_CYAN "\033[36m"
 #define NONE "\033[0m"
 
 #include <stdbool.h>
@@ -14,11 +15,15 @@ void flush_in() {
 }
 
 int main(void) {
-  float preco;        // Valor da gasolina
-  int tam;            // Tamanho da fila
-  float tanque = 200; // Quantidade de litros
-  bool rep = true;    // Parametro do laço de repetição do menu principal
-  bool rep2 = true;   // Parametro do laço de repetição do menu relatórios
+  float tanq_pad = 200; // Quantidade inicial de gasolina no tanque
+  float preco;          // Valor da gasolina
+  int tam;              // Tamanho da fila
+  float tanque = 200;   // Quantidade de litros
+  bool rep = true;      // Parametro do  laço de repetição do menu principal
+  bool rep2 = true; // Parametro do  laço de repetição do menu relatórios
+  int fila = 0;     // Número de carros na fila
+  int atend = 0;    // Número de clientes atendidos
+  float abast;      // Variável de leitura do valor a ser abastecido
 
   printf("Autor: João Vitor da Silva\n");
   printf(
@@ -50,15 +55,36 @@ int main(void) {
 
     scanf("%i", &op);
 
+    system("clear");
+
     switch (op) {
     case 1:
-      printf("%sCarro adicionado!%s\n", C_GREEN, NONE);
+      if (fila < tam) {
+        printf("%sCarro adicionado!%s\n", C_GREEN, NONE);
+        fila++;
+      } else {
+        printf("%sFila cheia ;-; -> volte mais tarde%s\n", C_RED, NONE);
+      }
       break;
     case 2:
-      printf("%sCarro abastecido!%s\n", C_GREEN, NONE);
+      if (fila > 0) {
+        printf("Informe a quantidade de gasolina:");
+        scanf("%f", &abast);
+        if (abast <= tanque) {
+          tanque -= abast;
+          fila--;
+          atend++;
+          printf("%sCarro abastecido!%s\n", C_GREEN, NONE);
+        } else {
+          printf("%sNão há gasolina suficiente%s\n", C_RED, NONE);
+        }
+
+      } else {
+        printf("%sNão há carros para abastecer%s\n", C_RED, NONE);
+      }
       break;
     case 3:
-      printf("%sCarros exibidos!%s\n", C_GREEN, NONE);
+      printf("%s%i carros exibidos!%s\n", C_GREEN, atend, NONE);
       break;
     case 4:
       rep2 = true;
@@ -76,22 +102,27 @@ int main(void) {
         flush_in();
         scanf("%c", &op2);
 
+        system("clear");
+
         switch (op2) {
         case 'a':
-          printf("%sQuantidade de litros vendida:%s\n", C_GREEN, NONE);
+          printf("%sQuantidade de litros vendida: %.2f%s\n", C_CYAN,
+                 (tanq_pad - tanque), NONE);
           break;
         case 'b':
-          printf("%sValor total arrecadado com as vendas:%s\n", C_GREEN, NONE);
+          printf("%sValor total arrecadado com as vendas: %.2f%s\n", C_CYAN,
+                 (tanq_pad - tanque) * preco, NONE);
           break;
         case 'c':
-          printf("%sQuantidade de carros atendidos:%s\n", C_GREEN, NONE);
-          break;
-        case 'd':
-          printf("%sQuantidade de combustível restante no tanque:%s\n", C_GREEN,
+          printf("%sQuantidade de carros atendidos: %i%s\n", C_CYAN, atend,
                  NONE);
           break;
+        case 'd':
+          printf("%sQuantidade de combustível restante no tanque: %.2f%s\n",
+                 C_CYAN, tanque, NONE);
+          break;
         case 'e':
-          printf("%sGerar arquivo de impressão:%s\n", C_GREEN, NONE);
+          printf("%sGerar arquivo de impressão%s\n", C_CYAN, NONE);
           break;
         case 'f':
           rep2 = false;
