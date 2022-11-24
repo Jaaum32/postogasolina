@@ -61,6 +61,7 @@ int main(void) {
   int atend = 1; // Número de clientes atendidos
 
   float abast; // Variável de leitura do valor a ser abastecido
+  FILE *pont_arq;
 
   execInicio();
 
@@ -139,7 +140,23 @@ int main(void) {
                  C_CYAN, tanque, NONE);
           break;
         case 'e':
-          printf("%sGerar arquivo de impressão%s\n", C_CYAN, NONE);
+          pont_arq = fopen("arquivo.txt", "w");
+          if (pont_arq == NULL)
+            printf("Erro ao abrir o arquivo.\n");
+          else {
+            printf("%sArquivo criado com sucesso!%s\n", C_CYAN, NONE);
+            fprintf(pont_arq, "Quantidade de litros vendida: %.2f\n",
+                    (tanq_pad - tanque));
+            fprintf(pont_arq, "Valor total arrecadado com as vendas: %.2f\n",
+                    (tanq_pad - tanque) * preco);
+            fprintf(pont_arq, "Quantidade de carros atendidos: %i\n",
+                    atend - 1);
+            fprintf(pont_arq,
+                    "Quantidade de combustível restante no tanque: %.2f\n",
+                    tanque);
+            fclose(pont_arq);
+          }
+
           break;
         case 'f':
           rep2 = false;
