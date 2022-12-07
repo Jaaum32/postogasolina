@@ -1,9 +1,9 @@
+#include "header.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "header.h"
 
 int main(void) {
   float tanq_pad = 200; // Quantidade inicial de gasolina no tanque
@@ -13,11 +13,10 @@ int main(void) {
   int fila = 0;         // Número de carros na fila
   bool rep = true;      // Parametro do  laço de repetição do menu principal
   bool rep2 = true; // Parametro do  laço de repetição do menu relatórios
-
-  int atend = 1; // Número de clientes atendidos
-
+  int atend = 0; // Número de clientes atendidos  
   float abast; // Variável de leitura do valor a ser abastecido
   FILE *pont_arq;
+  int contador = 1;
 
   execInicio();
 
@@ -44,9 +43,9 @@ int main(void) {
     case 1:
       if (fila < tam) {
         informarCarro(carrosFila, fila);
+        fila++;
         imp(carrosFila, fila);
         printf("%sCarro adicionado!%s\n", C_GREEN, NONE);
-        fila++;
       } else {
         printf("%sFila cheia ;-; -> volte mais tarde%s\n", C_RED, NONE);
       }
@@ -57,9 +56,16 @@ int main(void) {
         scanf("%f", &abast);
         if (abast <= tanque) {
           tanque -= abast;
-          atenderCarro(carrosFila, atendidos, fila, atend);
-          fila--;
+          
+          // inicio
+          atendidos[atend] = carrosFila[0];
           atend++;
+          atendidos = (struct Carro *)realloc(atendidos, (contador+1) * sizeof(struct Carro));
+          for (int i = 0; i < fila; i++) 
+              carrosFila[i] = carrosFila[i + 1];         
+          // fim
+
+          fila--;
           printf("%sCarro abastecido!%s\n", C_GREEN, NONE);
         } else {
           printf("%sNão há gasolina suficiente%s\n", C_RED, NONE);
@@ -87,9 +93,9 @@ int main(void) {
                  (tanq_pad - tanque) * preco, NONE);
           break;
         case 'c':
-          printf("%sQuantidade de carros atendidos: %i%s\n\n", C_CYAN,
-                 atend - 1, NONE);
-          imp(atendidos, atend - 1);
+          printf("%sQuantidade de carros atendidos: %i%s\n\n", C_CYAN, atend,
+                 NONE);
+          imp(atendidos, atend);
           break;
         case 'd':
           printf("%sQuantidade de combustível restante no tanque: %.2f%s\n",
@@ -105,8 +111,7 @@ int main(void) {
                     (tanq_pad - tanque));
             fprintf(pont_arq, "Valor total arrecadado com as vendas: %.2f\n",
                     (tanq_pad - tanque) * preco);
-            fprintf(pont_arq, "Quantidade de carros atendidos: %i\n",
-                    atend - 1);
+            fprintf(pont_arq, "Quantidade de carros atendidos: %i\n", atend);
             fprintf(pont_arq,
                     "Quantidade de combustível restante no tanque: %.2f\n",
                     tanque);
@@ -125,10 +130,16 @@ int main(void) {
 
       break;
     case 5:
-      calibrar(carrosFila[0]);
-      atenderCarro(carrosFila, atendidos, fila, atend);
-      fila--;
-      atend++;
+      if (fila > 0) {
+        calibrar(carrosFila[0]);
+        atend++;
+        atendidos =
+            (struct Carro *)realloc(atendidos, atend * sizeof(struct Carro));
+        atenderCarro(carrosFila, atendidos, fila, atend);
+        fila--;
+      } else {
+        printf("%sNão há carros para calibrar%s\n", C_RED, NONE);
+      }
 
       break;
     case 6:
@@ -142,4 +153,3 @@ int main(void) {
 
   return 0;
 }
-
