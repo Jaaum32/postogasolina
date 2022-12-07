@@ -1,9 +1,22 @@
-#include "header.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#define C_RED "\033[31m"
+#define C_GREEN "\033[32m"
+#define C_YELLOW "\033[33m"
+#define C_CYAN "\033[36m"
+#define NONE "\033[0m"
+
+struct Carro {
+  char marca[30];
+  char modelo[30];
+  int ano;
+  int portas;
+  char placa[10];
+};
 
 void flush_in() {
   int ch;
@@ -132,13 +145,13 @@ void calibrar(struct Carro c) {
 void imp(struct Carro c[], int tam) {
   for (int i = 0; i < tam; i++) {
     // if (strcmp(c[i].marca, "") != 0) {
-    printf("Carro %i\n", i + 1);
-    printf("Marca: %s", c[i].marca);
-    printf("Modelo: %s", c[i].modelo);
-    printf("Ano: %i\n", c[i].ano);
-    printf("Portas: %i\n", c[i].portas);
-    printf("Placa: %s\n", c[i].placa);
-    //}
+      printf("Carro %i\n", i + 1);
+      printf("Marca: %s", c[i].marca);
+      printf("Modelo: %s", c[i].modelo);
+      printf("Ano: %i\n", c[i].ano);
+      printf("Portas: %i\n", c[i].portas);
+      printf("Placa: %s\n", c[i].placa);
+    // }
   }
 }
 
@@ -167,27 +180,17 @@ void informarCarro(struct Carro carrosFila[], int fila) {
   carrosFila[fila] = c;
 }
 
-void atenderCarro(struct Carro carrosFila[], struct Carro *atendidos, int fila,
-                  int atend) {
+void atenderCarro(struct Carro carrosFila[], struct Carro *atendidos, int fila, int atend) {
   struct Carro n = {"", "", 0, 0, ""};
-
-  atendidos = (struct Carro *)realloc(atendidos, atend * sizeof(struct Carro));
+  
+  atendidos =
+      (struct Carro *)realloc(atendidos, atend * sizeof(struct Carro));
 
   atendidos[atend - 1].portas = carrosFila[0].portas;
-  printf("%i", carrosFila[0].portas);
-  printf("%i", atendidos[atend - 1].portas);
   atendidos[atend - 1].ano = carrosFila[0].ano;
-  printf("%i", carrosFila[0].ano);
-  printf("%i", atendidos[atend - 1].ano);
   strcpy(atendidos[atend - 1].marca, carrosFila[0].marca);
-  printf("%s", carrosFila[0].marca);
-  printf("%s", atendidos[atend - 1].marca);
   strcpy(atendidos[atend - 1].modelo, carrosFila[0].modelo);
-  printf("%s", carrosFila[0].modelo);
-  printf("%s", atendidos[atend - 1].modelo);
   strcpy(atendidos[atend - 1].placa, carrosFila[0].placa);
-  printf("%s", carrosFila[0].placa);
-  printf("%s", atendidos[atend - 1].placa);
 
   for (int i = 0; i <= fila; i++) {
     if (i != fila - 1) {
@@ -196,4 +199,6 @@ void atenderCarro(struct Carro carrosFila[], struct Carro *atendidos, int fila,
       carrosFila[i] = n;
     }
   }
+
+  
 }
