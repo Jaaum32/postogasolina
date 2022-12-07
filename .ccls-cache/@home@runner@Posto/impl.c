@@ -180,25 +180,25 @@ void informarCarro(struct Carro carrosFila[], int fila) {
   carrosFila[fila] = c;
 }
 
-void atenderCarro(struct Carro carrosFila[], struct Carro *atendidos, int fila, int atend) {
-  struct Carro n = {"", "", 0, 0, ""};
+// void atenderCarro(struct Carro carrosFila[], struct Carro *atendidos, int fila, int atend) {
+//   struct Carro n = {"", "", 0, 0, ""};
   
-  atendidos =
-      (struct Carro *)realloc(atendidos, atend * sizeof(struct Carro));
+//   atendidos =
+//       (struct Carro *)realloc(atendidos, (atend+1) * sizeof(struct Carro));
 
-  atendidos[atend - 1].portas = carrosFila[0].portas;
-  atendidos[atend - 1].ano = carrosFila[0].ano;
-  strcpy(atendidos[atend - 1].marca, carrosFila[0].marca);
-  strcpy(atendidos[atend - 1].modelo, carrosFila[0].modelo);
-  strcpy(atendidos[atend - 1].placa, carrosFila[0].placa);
+//   atendidos[atend - 1].portas = carrosFila[0].portas;
+//   atendidos[atend - 1].ano = carrosFila[0].ano;
+//   strcpy(atendidos[atend - 1].marca, carrosFila[0].marca);
+//   strcpy(atendidos[atend - 1].modelo, carrosFila[0].modelo);
+//   strcpy(atendidos[atend - 1].placa, carrosFila[0].placa);
 
-  for (int i = 0; i <= fila; i++) {
-    if (i != fila - 1) {
-      carrosFila[i] = carrosFila[i + 1];
-    } else {
-      carrosFila[i] = n;
-    }
-  }
+//   for (int i = 0; i <= fila; i++) {
+//     if (i != fila - 1) {
+//       carrosFila[i] = carrosFila[i + 1];
+//     } else {
+//       carrosFila[i] = n;
+//     }
+//   }
 
   
-}
+// }
